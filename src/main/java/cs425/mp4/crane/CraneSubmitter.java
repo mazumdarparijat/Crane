@@ -1,9 +1,8 @@
 package cs425.mp4.crane;
-import Messages.AcceptTopologyMessage;
-import Topology.Topology;
+import cs425.mp4.crane.Messages.AcceptTopologyMessage;
+import cs425.mp4.crane.Topology.Topology;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 

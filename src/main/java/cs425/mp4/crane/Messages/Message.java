@@ -1,4 +1,4 @@
-package Messages;
+package cs425.mp4.crane.Messages;
 
 import java.io.Serializable;
 

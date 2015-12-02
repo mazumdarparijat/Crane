@@ -1,4 +1,4 @@
-package Messages;
+package cs425.mp4.crane.Messages;
 
 /**
  * Created by parijatmazumdar on 01/12/15.
