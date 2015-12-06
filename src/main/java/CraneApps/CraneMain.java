@@ -50,7 +50,7 @@ public class CraneMain {
             tb.setSpout("randomWord", new RandomWord());
             tb.setBoltShuffleGrouping("shuffleIdentity", new IdentityBolt(), 2, "randomWord");
             tb.setBoltFieldsGrouping("fieldsIdentity", new IdentityBolt(), 2, "randomWord", "word");
-            CraneSubmitter cs=new CraneSubmitter("Parijats-MacBook-Pro.local", Constants.NIMBUS_PORT);
+            CraneSubmitter cs=new CraneSubmitter(args[0], Constants.NIMBUS_PORT);
             cs.submitTopology(tb.topology);
         } catch (InvalidIDException e) {
             e.printStackTrace();
