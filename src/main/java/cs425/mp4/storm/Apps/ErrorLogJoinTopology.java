@@ -19,6 +19,7 @@ package cs425.mp4.storm.Apps;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
 //import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
 
@@ -28,17 +29,23 @@ import backtype.storm.topology.TopologyBuilder;
 public class ErrorLogJoinTopology {
 
   public static void main(String[] args) throws Exception {
-
-    TopologyBuilder builder = new TopologyBuilder();
-
-    builder.setSpout("spout", new FileReaderSpout("/Users/agupta/Downloads/dataset/NASA_access_log_Jul95.txt"), 1);
-    builder.setBolt("filter", new RegexFilterBolt(".*\\.gif.*"), 1).shuffleGrouping("spout");
-    builder.setBolt("transform", new ExtractLogErrorBolt(), 1).shuffleGrouping("filter");
-    builder.setBolt("join", new JoinLogErrorBolt(), 1).shuffleGrouping("transform");
-    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("join");
-    Config conf = new Config();
-    conf.setDebug(false);
-    LocalCluster cluster = new LocalCluster();
-    cluster.submitTopology("Error Log Join", conf, builder.createTopology());
+	if(args.length!=1){
+		System.err.println("[ERROR]: Missing Argument");
+		System.err.println("Usage: ErrorLogJoinTopology filename");
+		System.exit(-1);
+	}
+	else{
+	    TopologyBuilder builder = new TopologyBuilder();
+	
+	    builder.setSpout("spout", new FileReaderSpout(args[0]), 1);
+	    builder.setBolt("filter", new RegexFilterBolt(".*\\.gif.*"), 1).shuffleGrouping("spout");
+	    builder.setBolt("transform", new ExtractLogErrorBolt(), 1).shuffleGrouping("filter");
+	    builder.setBolt("join", new JoinLogErrorBolt(), 1).shuffleGrouping("transform");
+	    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("join");
+	    Config conf = new Config();
+	    conf.setDebug(true);
+	    conf.setNumWorkers(3);
+	    StormSubmitter.submitTopologyWithProgressBar("Error Log Join", conf, builder.createTopology());
+	  }
   }
 }

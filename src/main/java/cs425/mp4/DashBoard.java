@@ -16,7 +16,7 @@ public class DashBoard {
 				Socket connectionSocket = welcomeSocket.accept();
 				BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 				String msg=inFromClient.readLine();
-				System.out.println("["+System.currentTimeMillis()+"]: "+msg);
+				System.out.println("["+System.currentTimeMillis()+"],"+msg);
 				connectionSocket.close();
 			}
 		}catch(IOException e){

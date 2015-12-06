@@ -28,7 +28,8 @@ public class DashboardPrinterBolt extends BaseRichBolt {
 		try{
     		Socket clientSocket=new Socket(_add,_port);
     		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-			outToServer.writeBytes(tuple.toString()+'\n');
+    		String linenumber=(String)tuple.getValueByField("linenumber");
+			outToServer.writeBytes(linenumber+","+tuple.toString()+'\n');
 			clientSocket.close();
 			_collector.ack(tuple);
     	}catch(IOException e){
