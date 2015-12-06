@@ -58,7 +58,7 @@ public class SpoutTask extends Thread {
     @Override
     public void run() {
         sp.open();
-        tupleID=0;
+        tupleID=1;
         while(true) {
             manageUnacked();
             if (!emitNext.get()) {
@@ -72,6 +72,9 @@ public class SpoutTask extends Thread {
                 long id;
                 if (unAcked.peek()==null || unAcked.peek().expiryTime>System.currentTimeMillis()) {
                     outVal=sp.nextTuple();
+                    if (outVal==null)
+                        continue;
+
                     id=tupleID++;
                 }
                 else {
