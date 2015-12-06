@@ -29,9 +29,9 @@ public class WordCountTopology {
 
   public static void main(String[] args) throws Exception {
 	  
-	if(args.length!=1){
+	if(args.length!=2){
 		System.err.println("[ERROR]: Missing Argument");
-		System.err.println("Usage: WordCountTopology filename");
+		System.err.println("Usage: WordCountTopology filename dashboradHost");
 		System.exit(-1);
 	}
 	else{
@@ -40,7 +40,7 @@ public class WordCountTopology {
 	    builder.setSpout("spout", new FileReaderSpout(args[0]), 1);
 	    builder.setBolt("lcount", new LocalCountBolt(), 1).shuffleGrouping("spout");
 	    builder.setBolt("filter", new IgnoreStopWordsBolt(), 1).shuffleGrouping("lcount");
-	    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("filter");
+	    builder.setBolt("dashboard", new DashboardPrinterBolt(args[1],8888),1).shuffleGrouping("filter");
 	    Config conf = new Config();
 	    conf.setDebug(true);
 	    conf.setNumWorkers(3);

@@ -29,9 +29,9 @@ import backtype.storm.topology.TopologyBuilder;
 public class ErrorLogJoinTopology {
 
   public static void main(String[] args) throws Exception {
-	if(args.length!=1){
+	if(args.length!=2){
 		System.err.println("[ERROR]: Missing Argument");
-		System.err.println("Usage: ErrorLogJoinTopology filename");
+		System.err.println("Usage: ErrorLogJoinTopology filename dashboradHost");
 		System.exit(-1);
 	}
 	else{
@@ -41,7 +41,7 @@ public class ErrorLogJoinTopology {
 	    builder.setBolt("filter", new RegexFilterBolt(".*\\.gif.*"), 1).shuffleGrouping("spout");
 	    builder.setBolt("transform", new ExtractLogErrorBolt(), 1).shuffleGrouping("filter");
 	    builder.setBolt("join", new JoinLogErrorBolt(), 1).shuffleGrouping("transform");
-	    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("join");
+	    builder.setBolt("dashboard", new DashboardPrinterBolt(args[1],8888),1).shuffleGrouping("join");
 	    Config conf = new Config();
 	    conf.setDebug(true);
 	    conf.setNumWorkers(3);
