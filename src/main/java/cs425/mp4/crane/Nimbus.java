@@ -91,6 +91,7 @@ public class Nimbus extends Thread {
         if (redistributionDone) {
             updateTaskLists();
             System.err.println("task redistribution done");
+            System.err.println(workerID2Tasks);
             for (String taskID : task2Address.keySet())
                 System.err.println(taskID+" = "+task2Address.get(taskID).hostname+" : "+task2Address.get(taskID).port);
         }
