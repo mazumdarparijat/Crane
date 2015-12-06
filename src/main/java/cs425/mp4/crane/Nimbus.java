@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cs425.mp3.Pid;
@@ -70,12 +67,14 @@ public class Nimbus extends Thread {
 
     private void taskRedistribution() {
         boolean redistributionDone=false;
-        for (String workerID : workerID2Tasks.keySet()) {
-            if (!failureDetector.isAlive(workerID)) {
+
+        for (Iterator<Map.Entry<String,ArrayList<String>>> it=workerID2Tasks.entrySet().iterator();it.hasNext();) {
+            Map.Entry<String,ArrayList<String>> entry=it.next();
+            if (!failureDetector.isAlive(entry.getKey())) {
                 redistributionDone=true;
                 Random rn=new Random();
                 List<String> availableWorkers=failureDetector.getMemlistSkipIntroducer();
-                for (String taskID : workerID2Tasks.get(workerID)) {
+                for (String taskID : entry.getValue()) {
                     String newWorker=availableWorkers.get(rn.nextInt(availableWorkers.size()));
                     int newPort=communicateLaunch(newWorker,taskID,id2Task.get(taskID).b,id2Task.get(taskID).fd);
                     task2Address.put(taskID,new TaskAddress(Pid.getPid(newWorker).hostname,newPort));
@@ -85,7 +84,7 @@ public class Nimbus extends Thread {
                     workerID2Tasks.get(newWorker).add(taskID);
                 }
 
-                workerID2Tasks.remove(workerID);
+                workerID2Tasks.remove(it);
             }
         }
 
