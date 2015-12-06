@@ -83,7 +83,7 @@ public class SpoutTask extends Thread {
                     id=top.data.tupleID;
                 }
 
-//                System.err.println("[SPOUT_TASK] Emit : "+id+" : "+outVal);
+                System.err.println("[SPOUT_TASK] Emit : "+id+" : "+outVal);
                 CraneData out=new CraneData(id,outVal);
                 unAcked.add(new QueueData(out,System.currentTimeMillis()+WAIT_TIME));
                 acks.put(out.tupleID,0);
