@@ -25,7 +25,7 @@ public class MasterTracker {
 			welcomeSocket=new ServerSocket(port);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("[ERROR]: Can't Create Server Socket");
+			System.out.println("[ERROR]: Cant Create Server Socket");
 			System.exit(-1);
 		}
 	}
