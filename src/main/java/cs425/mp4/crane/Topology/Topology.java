@@ -13,7 +13,7 @@ public class Topology implements Serializable {
         records=new ArrayList<TopologyRecord>();
     }
 
-    public void addRecord(TopologyRecord rec) {
+    void addRecord(TopologyRecord rec) {
         records.add(rec);
     }
 

@@ -2,56 +2,92 @@ package cs425.mp4.crane;
 
 import cs425.mp4.crane.Topology.Bolt;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 import java.util.HashMap;
 
 /**
  * Created by parijatmazumdar on 03/12/15.
  */
 public class WorkerThread extends Thread {
+    private final int BYTE_LEN=1024;
     private final Bolt bolt;
     private final Forwarder fd;
-    private final HashMap<String,TaskAddress> taskAddress;
-    private final ServerSocket socket;
-    public WorkerThread(Bolt b, Forwarder fd, int port, HashMap<String,TaskAddress> task2Address) throws IOException {
+    private final Worker wk;
+    private final DatagramSocket socket;
+    private final String taskID;
+    public WorkerThread(String taskID, Bolt b, Forwarder fd, int port, Worker wk) throws IOException {
         bolt=b;
         this.fd=fd;
-        taskAddress=task2Address;
-        socket=new ServerSocket(port);
+        this.wk=wk;
+        socket=new DatagramSocket(port);
         bolt.open();
+        this.taskID=taskID;
     }
 
     @Override
     public void run() {
-        try {
-            Socket sock=socket.accept();
-            ObjectInputStream is=new ObjectInputStream(sock.getInputStream());
-            CraneData in=(CraneData) is.readObject();
-            sock.close();
+        byte [] receiveData=new byte[BYTE_LEN];
+        while(true) {
+            try {
+                DatagramPacket pack=new DatagramPacket(receiveData,receiveData.length);
+                socket.receive(pack);
+                ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(receiveData));
+                CraneData in = (CraneData) is.readObject();
+                is.close();
 
-            in.val=bolt.execute(in.val);
-            for (String taskID : fd.getForwardTaskIDs(in.val)) {
-                forwardResult(in,taskAddress.get(taskID).hostname,taskAddress.get(taskID).port);
+//                System.err.println("[BOLT_TASK] "+taskID+" tuple_id : "+in.tupleID);
+                in.val = bolt.execute(in.val);
+                HashMap<String,TaskAddress> taskAddress=wk.getTask2AddressMap();
+//                System.err.println("[BOLT_TASK] " + taskID + " Emit : " + in.tupleID + " : " + in.val);
+                if (in.val==null || fd.isLeaf()) {
+                    sendAck(in, taskAddress.get(fd.spoutID).hostname, taskAddress.get(fd.spoutID).port, fd.numAcks);
+                } else {
+                    for (String taskID : fd.getForwardTaskIDs(in.val)) {
+                        forwardResult(in, taskAddress.get(taskID).hostname, taskAddress.get(taskID).port);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
+        }
+    }
+
+    private void sendAck(CraneData in, String hostname, int port, int numAcks) {
+        try {
+            ByteArrayOutputStream bo=new ByteArrayOutputStream(BYTE_LEN);
+            ObjectOutputStream os=new ObjectOutputStream(bo);
+            os.writeObject(in);
+            os.writeObject(numAcks);
+            os.flush();
+
+            byte [] sendBytes=bo.toByteArray();
+            DatagramPacket dp=new DatagramPacket(sendBytes,sendBytes.length, InetAddress.getByName(hostname),port);
+            DatagramSocket dSock=new DatagramSocket();
+            dSock.send(dp);
+
+            os.close();
+            dSock.close();
+
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     private void forwardResult(CraneData in, String hostname, int port) {
         try {
-            Socket sock=new Socket(hostname,port);
-            ObjectOutputStream os=new ObjectOutputStream(sock.getOutputStream());
+            ByteArrayOutputStream bo=new ByteArrayOutputStream(BYTE_LEN);
+            ObjectOutputStream os=new ObjectOutputStream(bo);
             os.writeObject(in);
             os.flush();
-            sock.close();
+            byte [] sendBytes=bo.toByteArray();
+            DatagramPacket dp=new DatagramPacket(sendBytes,sendBytes.length, InetAddress.getByName(hostname),port);
+            DatagramSocket dSock=new DatagramSocket();
+            dSock.send(dp);
+            os.close();
+            dSock.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

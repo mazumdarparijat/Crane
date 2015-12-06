@@ -12,7 +12,7 @@ public class TopologyRecord implements Serializable {
     public final char type;
     public final Serializable operationUnit;
     public final int numTasks;
-    public final String dependency;
+    public final String parentID;
     public final String groupingField;
 
     public TopologyRecord(String id, char type, Serializable operationUnit, int numTasks,
@@ -21,7 +21,7 @@ public class TopologyRecord implements Serializable {
         this.type = type;
         this.operationUnit = operationUnit;
         this.numTasks = numTasks;
-        this.dependency = dependency;
+        this.parentID = dependency;
         this.groupingField = groupingField;
     }
 }

@@ -9,19 +9,19 @@ import java.util.Set;
  * Created by parijatmazumdar on 01/12/15.
  */
 public class TopologyBuilder {
-    private final Topology t;
+    public final Topology topology;
     private Set<String> idSet;
     public TopologyBuilder() {
-        t=new Topology();
+        topology =new Topology();
         idSet=new HashSet<String>();
     }
 
-    public void setSpout(String id, Spout s,String filename) throws InvalidIDException {
+    public void setSpout(String id, Spout s) throws InvalidIDException {
         if (idSet.contains(id))
             throw new InvalidIDException("ID already taken");
 
         idSet.add(id);
-        t.addRecord(new TopologyRecord(id,TopologyRecord.spoutType,s,1,filename,null));
+        topology.addRecord(new TopologyRecord(id, TopologyRecord.spoutType, s, 1, null, null));
     }
 
     public void setBoltShuffleGrouping(String id, Bolt b, int numTasks, String parentID) throws InvalidIDException {
@@ -32,7 +32,7 @@ public class TopologyBuilder {
             throw new InvalidIDException("parent ID does not exist");
 
         idSet.add(id);
-        t.addRecord(new TopologyRecord(id, TopologyRecord.boltType, b, numTasks, parentID,null));
+        topology.addRecord(new TopologyRecord(id, TopologyRecord.boltType, b, numTasks, parentID, null));
     }
 
     public void setBoltFieldsGrouping(String id, Bolt b, int numTasks, String parentID, String hashField)
@@ -44,6 +44,6 @@ public class TopologyBuilder {
             throw new InvalidIDException("parent ID does not exist");
 
         idSet.add(id);
-        t.addRecord(new TopologyRecord(id, TopologyRecord.boltType, b, numTasks, parentID,hashField));
+        topology.addRecord(new TopologyRecord(id, TopologyRecord.boltType, b, numTasks, parentID, hashField));
     }
 }
