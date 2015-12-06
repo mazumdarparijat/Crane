@@ -84,7 +84,7 @@ public class Nimbus extends Thread {
                     workerID2Tasks.get(newWorker).add(taskID);
                 }
 
-                workerID2Tasks.remove(it);
+                it.remove();
             }
         }
 
