@@ -14,6 +14,7 @@ import java.io.IOException;
 public class NimbusMain {
     private static int FDport;
     public static FailureDetector FD;
+    public static Nimbus nb;
     /**
      * Formats commandLine inputs and flags
      */
@@ -71,7 +72,7 @@ public class NimbusMain {
 
         Thread.sleep(1000);
 
-        Nimbus nb=new Nimbus(FD);
+        nb=new Nimbus(FD);
         nb.setDaemon(true);
         nb.start();
 

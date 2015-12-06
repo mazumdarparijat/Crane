@@ -49,7 +49,7 @@ public class CraneMain {
         try {
             tb.setSpout("randomWord", new RandomWord());
             tb.setBoltShuffleGrouping("shuffleIdentity", new IdentityBolt(), 2, "randomWord");
-            tb.setBoltFieldsGrouping("fieldsIdentity", new IdentityBolt(), 2, "randomWord", "word");
+            tb.setBoltFieldsGrouping("fieldsIdentity", new IdentityBolt(), 2, "shuffleIdentity", "word");
             CraneSubmitter cs=new CraneSubmitter(args[0], Constants.NIMBUS_PORT);
             cs.submitTopology(tb.topology);
             Thread.sleep(1000);

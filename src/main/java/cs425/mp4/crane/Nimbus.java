@@ -45,6 +45,11 @@ public class Nimbus extends Thread {
         spoutEmitTuples =new AtomicBoolean(false);
     }
 
+    public void printTaskDistribution() {
+        for (String taskID : task2Address.keySet())
+            System.err.println(taskID+" = "+task2Address.get(taskID).hostname+" : "+task2Address.get(taskID).port);
+    }
+
     public void run() {
         System.out.println("[NIMBUS] Nimbus run started");
         while(true) {
@@ -84,8 +89,12 @@ public class Nimbus extends Thread {
             }
         }
 
-        if (redistributionDone)
+        if (redistributionDone) {
             updateTaskLists();
+            System.err.println("task redistribution done");
+            for (String taskID : task2Address.keySet())
+                System.err.println(taskID+" = "+task2Address.get(taskID).hostname+" : "+task2Address.get(taskID).port);
+        }
     }
 
     private void updateTaskLists() {

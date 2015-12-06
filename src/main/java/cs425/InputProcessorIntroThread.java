@@ -28,15 +28,18 @@ public class InputProcessorIntroThread extends Thread{
         } else if (line.equals("l")) {
         	System.err.println("Leave Initiated");
         	NimbusMain.FD.leaveInitiate();
-        } else {
-            System.err.println("argument not recognised. Press m to get membership list, i to get id, l to leave, "
-            		+ "b to get master and f to list files stores");
+        } else if (line.equals("d")) {
+			System.err.println("Task Distribution");
+			NimbusMain.nb.printTaskDistribution();
+		} else {
+            System.err.println("argument not recognised. Press m to get membership list, i to get id, l to leave,d" +
+					" to get task distribution");
         }
     }
 	@Override
 	public void run(){
 		System.err.println("Ready to take arguments. Press m to get membership list, i to get id, l to leave and "
-            		+ "b to get master");
+            		+ "d to get task distribution");
 		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
 		while(true){
 	        try {
