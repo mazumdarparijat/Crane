@@ -58,6 +58,7 @@ public class SpoutTask extends Thread {
         sp.open();
         tupleID=1;
         while(true) {
+            System.err.println("[SPOUT_TASK] Queue size "+unAcked.size());
 //            manageUnacked();
             if (!emitNext.get()) {
                 try {
@@ -80,7 +81,7 @@ public class SpoutTask extends Thread {
                             continue;
 
                         id = tupleID++;
-                        System.err.println("[SPOUT_TASK] " + System.currentTimeMillis() + " Emit : " + id);
+//                        System.err.println("[SPOUT_TASK] " + System.currentTimeMillis() + " Emit : " + id);
                     } else {
                         try {
                             Thread.sleep(10);
