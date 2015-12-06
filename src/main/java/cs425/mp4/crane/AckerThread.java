@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by parijatmazumdar on 04/12/15.
  */
 public class AckerThread extends Thread {
-    private static final int BYTE_LEN=1024;
+    private static final int BYTE_LEN=10000;
     private final DatagramSocket sock;
     Map<Long,Integer> ackRecords;
     private PrintWriter pr;

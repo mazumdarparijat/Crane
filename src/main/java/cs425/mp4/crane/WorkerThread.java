@@ -10,7 +10,7 @@ import java.util.HashMap;
  * Created by parijatmazumdar on 03/12/15.
  */
 public class WorkerThread extends Thread {
-    private final int BYTE_LEN=1024;
+    private final int BYTE_LEN=10000;
     private final Bolt bolt;
     private final Forwarder fd;
     private final Worker wk;
@@ -69,7 +69,7 @@ public class WorkerThread extends Thread {
             dSock.send(dp);
 
             os.close();
-//            dSock.close();
+            dSock.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,7 +87,7 @@ public class WorkerThread extends Thread {
             DatagramSocket dSock=new DatagramSocket();
             dSock.send(dp);
             os.close();
-//            dSock.close();
+            dSock.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

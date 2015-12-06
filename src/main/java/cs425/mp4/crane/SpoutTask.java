@@ -27,7 +27,7 @@ public class SpoutTask extends Thread {
             this.expiryTime=expiryTime;
         }
     }
-    private final int BYTE_LEN=1024;
+    private final int BYTE_LEN=10000;
     private final long WAIT_TIME=1000;
     private final Spout sp;
     private final Forwarder fd;
