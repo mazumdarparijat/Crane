@@ -28,7 +28,7 @@ public class SpoutTask extends Thread {
         }
     }
     private final int BYTE_LEN=1024;
-    private final long WAIT_TIME=10;
+    private final long WAIT_TIME=1000;
     private final Spout sp;
     private final Forwarder fd;
     private final HashMap<String,TaskAddress> taskAddress;
