@@ -28,8 +28,8 @@ public class SpoutTask extends Thread {
         }
     }
     private final int BYTE_LEN=10000;
-    private final long WAIT_TIME=100000;
-    private final int QCAPACITY=10000;
+    private final long WAIT_TIME=10000;
+    private final int QCAPACITY=1000;
     private final Spout sp;
     private final Forwarder fd;
     private final HashMap<String,TaskAddress> taskAddress;
@@ -81,7 +81,7 @@ public class SpoutTask extends Thread {
                         System.err.println("[SPOUT_TASK] Emit : " + id);
                     } else {
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(10);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
