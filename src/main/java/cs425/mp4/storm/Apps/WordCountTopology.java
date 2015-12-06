@@ -19,6 +19,7 @@ package cs425.mp4.storm.Apps;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
 ////import backtype.storm.StormSubmitter;
 /**
@@ -27,16 +28,23 @@ import backtype.storm.topology.TopologyBuilder;
 public class WordCountTopology {
 
   public static void main(String[] args) throws Exception {
-
-    TopologyBuilder builder = new TopologyBuilder();
-
-    builder.setSpout("spout", new FileReaderSpout("/Users/agupta/Downloads/dataset/quotes_processed_2008-08.txt"), 1);
-    builder.setBolt("lcount", new LocalCountBolt(), 1).shuffleGrouping("spout");
-    builder.setBolt("filter", new IgnoreStopWordsBolt(), 1).shuffleGrouping("lcount");
-    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("filter");
-    Config conf = new Config();
-    conf.setDebug(false);
-    LocalCluster cluster = new LocalCluster();
-    cluster.submitTopology("Word Count", conf, builder.createTopology());
+	  
+	if(args.length!=1){
+		System.err.println("[ERROR]: Missing Argument");
+		System.err.println("Usage: WordCountTopology filename");
+		System.exit(-1);
+	}
+	else{
+	    TopologyBuilder builder = new TopologyBuilder();
+	
+	    builder.setSpout("spout", new FileReaderSpout(args[0]), 1);
+	    builder.setBolt("lcount", new LocalCountBolt(), 1).shuffleGrouping("spout");
+	    builder.setBolt("filter", new IgnoreStopWordsBolt(), 1).shuffleGrouping("lcount");
+	    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("filter");
+	    Config conf = new Config();
+	    conf.setDebug(true);
+	    conf.setNumWorkers(3);
+	    StormSubmitter.submitTopologyWithProgressBar("Word Count", conf, builder.createTopology());
+	  }
   }
 }

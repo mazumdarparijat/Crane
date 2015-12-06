@@ -19,6 +19,7 @@ package cs425.mp4.storm.Apps;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
 //import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
 
@@ -28,17 +29,23 @@ import backtype.storm.topology.TopologyBuilder;
 public class FlagPostRedditTopology {
 
   public static void main(String[] args) throws Exception {
-
-    TopologyBuilder builder = new TopologyBuilder();
-
-    builder.setSpout("spout", new FileReaderSpout("/Users/agupta/Downloads/dataset/redditSubmissions.csv"), 1);
-    builder.setBolt("filter", new RegexFilterBolt("^[^#].*"), 1).shuffleGrouping("spout");
-    builder.setBolt("transform", new ExtractPostRedditBolt(), 1).shuffleGrouping("filter");
-    builder.setBolt("filterflags", new FlagPostFilterRedditBolt(), 1).shuffleGrouping("transform");
-    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("filterflags");
-    Config conf = new Config();
-    conf.setDebug(false);
-    LocalCluster cluster = new LocalCluster();
-    cluster.submitTopology("Flag Post Reddit", conf, builder.createTopology());
+  if(args.length!=1){
+		System.err.println("[ERROR]: Missing Argument");
+		System.err.println("Usage: FlagPostRedditTopology filename");
+		System.exit(-1);
+  }
+  else{
+	    TopologyBuilder builder = new TopologyBuilder();
+	
+	    builder.setSpout("spout", new FileReaderSpout(args[0]), 1);
+	    builder.setBolt("filter", new RegexFilterBolt("^[^#].*"), 1).shuffleGrouping("spout");
+	    builder.setBolt("transform", new ExtractPostRedditBolt(), 1).shuffleGrouping("filter");
+	    builder.setBolt("filterflags", new FlagPostFilterRedditBolt(), 1).shuffleGrouping("transform");
+	    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("filterflags");
+	    Config conf = new Config();
+	    conf.setDebug(true);
+	    conf.setNumWorkers(3);
+	    StormSubmitter.submitTopologyWithProgressBar("Flag Post Reddit", conf, builder.createTopology());
+	  }
   }
 }
