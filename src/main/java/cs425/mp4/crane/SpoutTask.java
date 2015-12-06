@@ -29,6 +29,7 @@ public class SpoutTask extends Thread {
     }
     private final int BYTE_LEN=10000;
     private final long WAIT_TIME=100000;
+    private final int QCAPACITY=10000;
     private final Spout sp;
     private final Forwarder fd;
     private final HashMap<String,TaskAddress> taskAddress;
@@ -72,18 +73,21 @@ public class SpoutTask extends Thread {
                 HashMap<String,String> outVal;
                 long id;
                 if (unAcked.peek()==null || unAcked.peek().expiryTime>System.currentTimeMillis()) {
-                    outVal=sp.nextTuple();
-                    if (outVal==null)
-                        continue;
+                    if (unAcked.size()<QCAPACITY) {
+                        outVal = sp.nextTuple();
+                        if (outVal == null)
+                            continue;
 
-                    id=tupleID++;
-                    System.err.println("[SPOUT_TASK] Emit : "+id);
+                        id = tupleID++;
+                        System.err.println("[SPOUT_TASK] Emit : " + id);
+                    } else
+                        continue;
                 }
                 else {
                     QueueData top=unAcked.poll();
                     outVal=top.data.val;
                     id=top.data.tupleID;
-                    System.err.println("[SPOUT_TASK] Re-Emit : "+id);
+                    System.err.println("[SPOUT_TASK] Re-Emit : " + id);
                 }
 
                 CraneData out=new CraneData(id,outVal);
