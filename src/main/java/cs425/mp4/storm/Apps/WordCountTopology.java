@@ -33,8 +33,9 @@ public class WordCountTopology {
     builder.setSpout("spout", new FileReaderSpout("/Users/agupta/Downloads/dataset/quotes_processed_2008-08.txt"), 1);
     builder.setBolt("lcount", new LocalCountBolt(), 1).shuffleGrouping("spout");
     builder.setBolt("filter", new IgnoreStopWordsBolt(), 1).shuffleGrouping("lcount");
+    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("filter");
     Config conf = new Config();
-    conf.setDebug(true);
+    conf.setDebug(false);
     LocalCluster cluster = new LocalCluster();
     cluster.submitTopology("Word Count", conf, builder.createTopology());
   }

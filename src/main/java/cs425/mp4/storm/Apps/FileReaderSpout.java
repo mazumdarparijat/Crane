@@ -67,7 +67,6 @@ public class FileReaderSpout extends BaseRichSpout {
     	if(buffer.size()<BUFFER_CAPACITY){
     		try {
 				String line = bufferedReader.readLine();
-				
 				if(line!=null){
 					linenumber++;
 					Values tuple=new Values(Integer.toString(linenumber),line);
@@ -114,6 +113,7 @@ public class FileReaderSpout extends BaseRichSpout {
 
   @Override
   public void fail(Object id) {
+	  System.out.println("["+System.currentTimeMillis()+"] Fail received for "+id.toString());
   }
 
   public void declareOutputFields(OutputFieldsDeclarer declarer) {

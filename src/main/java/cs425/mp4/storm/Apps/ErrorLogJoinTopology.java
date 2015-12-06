@@ -35,6 +35,7 @@ public class ErrorLogJoinTopology {
     builder.setBolt("filter", new RegexFilterBolt(".*\\.gif.*"), 1).shuffleGrouping("spout");
     builder.setBolt("transform", new ExtractLogErrorBolt(), 1).shuffleGrouping("filter");
     builder.setBolt("join", new JoinLogErrorBolt(), 1).shuffleGrouping("transform");
+    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("join");
     Config conf = new Config();
     conf.setDebug(false);
     LocalCluster cluster = new LocalCluster();

@@ -34,7 +34,8 @@ public class FlagPostRedditTopology {
     builder.setSpout("spout", new FileReaderSpout("/Users/agupta/Downloads/dataset/redditSubmissions.csv"), 1);
     builder.setBolt("filter", new RegexFilterBolt("^[^#].*"), 1).shuffleGrouping("spout");
     builder.setBolt("transform", new ExtractPostRedditBolt(), 1).shuffleGrouping("filter");
-    builder.setBolt("fliterflags", new FlagPostFilterRedditBolt(), 1).shuffleGrouping("transform");
+    builder.setBolt("filterflags", new FlagPostFilterRedditBolt(), 1).shuffleGrouping("transform");
+    builder.setBolt("dashboard", new DashboardPrinterBolt("localhost",8888),1).shuffleGrouping("filterflags");
     Config conf = new Config();
     conf.setDebug(false);
     LocalCluster cluster = new LocalCluster();
