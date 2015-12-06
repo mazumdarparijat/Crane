@@ -24,7 +24,6 @@ public class CraneSubmitter {
             os.writeObject(new AcceptTopologyMessage());
             os.writeObject(t);
             os.flush();
-            sock.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

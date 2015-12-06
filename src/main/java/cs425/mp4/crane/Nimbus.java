@@ -96,7 +96,6 @@ public class Nimbus extends Thread {
                 os.writeObject(new UpdateTaskListMessage());
                 os.writeObject(task2Address);
                 os.flush();
-                sock.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

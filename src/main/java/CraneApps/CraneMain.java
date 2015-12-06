@@ -52,7 +52,10 @@ public class CraneMain {
             tb.setBoltFieldsGrouping("fieldsIdentity", new IdentityBolt(), 2, "randomWord", "word");
             CraneSubmitter cs=new CraneSubmitter(args[0], Constants.NIMBUS_PORT);
             cs.submitTopology(tb.topology);
+            Thread.sleep(1000);
         } catch (InvalidIDException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
