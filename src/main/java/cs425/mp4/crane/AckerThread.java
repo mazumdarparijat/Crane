@@ -1,8 +1,6 @@
 package cs425.mp4.crane;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.Map;
@@ -14,9 +12,11 @@ public class AckerThread extends Thread {
     private static final int BYTE_LEN=1024;
     private final DatagramSocket sock;
     Map<Long,Integer> ackRecords;
+    private PrintWriter pr;
     public AckerThread(int ackPort,Map<Long,Integer> ackRecords) throws IOException {
         sock=new DatagramSocket(ackPort);
         this.ackRecords=ackRecords;
+        pr=new PrintWriter(System.getProperty("user.home")+"/results.txt","utf-8");
     }
 
     @Override
@@ -30,8 +30,9 @@ public class AckerThread extends Thread {
                 CraneData data = (CraneData) is.readObject();
                 Integer numAcks= (Integer) is.readObject();
                 is.close();
+                pr.println(System.currentTimeMillis()+","+data.tupleID + "," + data.val);
 //                System.out.println("[ACKER] tuple_id : " + data.tupleID + ", tuple : " + data.val + ", numAcks : " + numAcks);
-                ackRecords.put(data.tupleID,ackRecords.get(data.tupleID)+numAcks);
+                ackRecords.put(data.tupleID, ackRecords.get(data.tupleID) + numAcks);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
