@@ -78,7 +78,7 @@ public class SpoutTask extends Thread {
                             continue;
 
                         id = tupleID++;
-                        System.err.println("[SPOUT_TASK] Emit : " + id);
+                        System.err.println("[SPOUT_TASK] "+System.currentTimeMillis()+" Emit : " + id);
                     } else {
                         try {
                             Thread.sleep(10);
@@ -92,10 +92,10 @@ public class SpoutTask extends Thread {
                     QueueData top=unAcked.poll();
                     outVal=top.data.val;
                     id=top.data.tupleID;
-                    System.err.println("[SPOUT_TASK] Re-Emit : " + id);
+//                    System.err.println("[SPOUT_TASK] Re-Emit : " + id);
                 }
 
-                System.err.println("[SPOUT_TASK] UNACKED SIZE : " + unAcked.size());
+//                System.err.println("[SPOUT_TASK] UNACKED SIZE : " + unAcked.size());
                 CraneData out=new CraneData(id,outVal);
                 unAcked.add(new QueueData(out,System.currentTimeMillis()+WAIT_TIME));
                 acks.put(out.tupleID,0);
@@ -111,6 +111,7 @@ public class SpoutTask extends Thread {
     private void manageUnacked() {
         while (!unAcked.isEmpty() && acks.get(unAcked.peek().data.tupleID)>=fd.numAcks) {
 //            System.err.println("[SPOUT_TASK] remove "+unAcked.peek().data.tupleID);
+            System.err.println("[SPOUT_TASK] "+System.currentTimeMillis()+" Remove : " + unAcked.peek().data.tupleID);
             acks.remove(unAcked.poll());
         }
     }

@@ -32,7 +32,7 @@ public class AckerThread extends Thread {
                 is.close();
                 if (data.val!=null)
                     pr.println(System.currentTimeMillis()+","+data.tupleID + "," + data.val);
-                System.err.println("[ACKER] tuple_id : " + data.tupleID);
+                System.err.println("[ACKER] "+System.currentTimeMillis()+" "+"tuple_id : " + data.tupleID);
                 ackRecords.put(data.tupleID, ackRecords.get(data.tupleID) + numAcks);
             } catch (IOException e) {
                 e.printStackTrace();
