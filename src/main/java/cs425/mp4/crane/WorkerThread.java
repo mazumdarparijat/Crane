@@ -69,7 +69,7 @@ public class WorkerThread extends Thread {
             dSock.send(dp);
 
             os.close();
-            dSock.close();
+//            dSock.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,7 +87,7 @@ public class WorkerThread extends Thread {
             DatagramSocket dSock=new DatagramSocket();
             dSock.send(dp);
             os.close();
-            dSock.close();
+//            dSock.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
