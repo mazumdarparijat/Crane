@@ -8,10 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,8 +24,9 @@ public class SpoutTask extends Thread {
             this.expiryTime=expiryTime;
         }
     }
-    private final int BYTE_LEN=1024;
-    private final long WAIT_TIME=10;
+    private final int BYTE_LEN=10000;
+    private final long WAIT_TIME=10000;
+    private final int QCAPACITY=1000;
     private final Spout sp;
     private final Forwarder fd;
     private final HashMap<String,TaskAddress> taskAddress;
@@ -60,7 +58,8 @@ public class SpoutTask extends Thread {
         sp.open();
         tupleID=1;
         while(true) {
-            manageUnacked();
+            System.err.println("[SPOUT_TASK] Queue size "+unAcked.size());
+//            manageUnacked();
             if (!emitNext.get()) {
                 try {
                     Thread.sleep(500);
@@ -68,24 +67,44 @@ public class SpoutTask extends Thread {
                     e.printStackTrace();
                 }
             } else {
+
+                if (unAcked.size()==QCAPACITY) {
+                    manageUnacked();
+                }
+
                 HashMap<String,String> outVal;
                 long id;
                 if (unAcked.peek()==null || unAcked.peek().expiryTime>System.currentTimeMillis()) {
-                    outVal=sp.nextTuple();
-                    if (outVal==null)
-                        continue;
+                    if (unAcked.size()<QCAPACITY) {
+                        outVal = sp.nextTuple();
+                        if (outVal == null)
+                            continue;
 
-                    id=tupleID++;
+                        id = tupleID++;
+//                        System.err.println("[SPOUT_TASK] " + System.currentTimeMillis() + " Emit : " + id);
+                    } else {
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        continue;
+                    }
                 }
                 else {
                     QueueData top=unAcked.poll();
                     outVal=top.data.val;
                     id=top.data.tupleID;
+                    if (acks.get(id)>=fd.numAcks) {
+                        acks.remove(id);
+                        continue;
+                    }
+//                    System.err.println("[SPOUT_TASK] Re-Emit : " + id);
                 }
 
-//                System.err.println("[SPOUT_TASK] Emit : "+id+" : "+outVal);
+//                System.err.println("[SPOUT_TASK] UNACKED SIZE : " + unAcked.size());
                 CraneData out=new CraneData(id,outVal);
-                unAcked.add(new QueueData(out,System.currentTimeMillis()+WAIT_TIME));
+                unAcked.add(new QueueData(out, System.currentTimeMillis() + WAIT_TIME));
                 acks.put(out.tupleID,0);
 
                 for (String taskID : fd.getForwardTaskIDs(outVal)) {
@@ -97,9 +116,11 @@ public class SpoutTask extends Thread {
     }
 
     private void manageUnacked() {
-        while (!unAcked.isEmpty() && acks.get(unAcked.peek().data.tupleID)>=fd.numAcks) {
-//            System.err.println("[SPOUT_TASK] remove "+unAcked.peek().data.tupleID);
-            acks.remove(unAcked.poll());
+        Iterator<QueueData> it=unAcked.iterator();
+        while (it.hasNext()) {
+            QueueData d=it.next();
+            if (acks.get(d.data.tupleID)>=fd.numAcks)
+                it.remove();
         }
     }
 

@@ -10,7 +10,7 @@ import java.util.HashMap;
  * Created by parijatmazumdar on 03/12/15.
  */
 public class WorkerThread extends Thread {
-    private final int BYTE_LEN=1024;
+    private final int BYTE_LEN=10000;
     private final Bolt bolt;
     private final Forwarder fd;
     private final Worker wk;
@@ -30,13 +30,14 @@ public class WorkerThread extends Thread {
         byte [] receiveData=new byte[BYTE_LEN];
         while(true) {
             try {
+//                System.err.println("[BOLT_TASK] Waiting for next packet "+taskID);
                 DatagramPacket pack=new DatagramPacket(receiveData,receiveData.length);
                 socket.receive(pack);
                 ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(receiveData));
                 CraneData in = (CraneData) is.readObject();
                 is.close();
 
-//                System.err.println("[BOLT_TASK] "+taskID+" tuple_id : "+in.tupleID);
+//                System.err.println("[BOLT_TASK] Received at " + taskID + " tuple_id : "+in.tupleID);
                 in.val = bolt.execute(in.val);
                 HashMap<String,TaskAddress> taskAddress=wk.getTask2AddressMap();
 //                System.err.println("[BOLT_TASK] " + taskID + " Emit : " + in.tupleID + " : " + in.val);

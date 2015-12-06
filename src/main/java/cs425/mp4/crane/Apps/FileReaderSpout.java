@@ -51,6 +51,7 @@ public class FileReaderSpout implements Spout {
 				return emit;
 			}
 			else{
+				System.err.println("####################### FILE END ############################");
 				Thread.sleep(100);
 				return null;
 			}

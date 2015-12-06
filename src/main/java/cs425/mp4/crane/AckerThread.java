@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by parijatmazumdar on 04/12/15.
  */
 public class AckerThread extends Thread {
-    private static final int BYTE_LEN=1024;
+    private static final int BYTE_LEN=10000;
     private final DatagramSocket sock;
     Map<Long,Integer> ackRecords;
     private PrintWriter pr;
@@ -30,8 +30,11 @@ public class AckerThread extends Thread {
                 CraneData data = (CraneData) is.readObject();
                 Integer numAcks= (Integer) is.readObject();
                 is.close();
-                pr.println(System.currentTimeMillis()+","+data.tupleID + "," + data.val);
-//                System.out.println("[ACKER] tuple_id : " + data.tupleID + ", tuple : " + data.val + ", numAcks : " + numAcks);
+                if (data.val!=null) {
+                    pr.println(System.currentTimeMillis() + "," + data.tupleID + "," + data.val);
+                    pr.flush();
+                }
+                System.err.println("[ACKER] "+System.currentTimeMillis()+" "+"tuple_id : " + data.tupleID);
                 ackRecords.put(data.tupleID, ackRecords.get(data.tupleID) + numAcks);
             } catch (IOException e) {
                 e.printStackTrace();
