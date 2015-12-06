@@ -28,7 +28,7 @@ public class SpoutTask extends Thread {
         }
     }
     private final int BYTE_LEN=10000;
-    private final long WAIT_TIME=10000;
+    private final long WAIT_TIME=100000;
     private final Spout sp;
     private final Forwarder fd;
     private final HashMap<String,TaskAddress> taskAddress;
@@ -61,6 +61,7 @@ public class SpoutTask extends Thread {
         tupleID=1;
         while(true) {
             manageUnacked();
+            System.err.println("[SPOUT_TASK] UNACKED SIZE : " + unAcked.size());
             if (!emitNext.get()) {
                 try {
                     Thread.sleep(500);
