@@ -30,7 +30,7 @@ public class ErrorLogJoinTopology {
 
   public static void main(String[] args) throws Exception {
 	if(args.length!=2){
-		System.err.println("[ERROR]: Missing Argument");
+		System.err.println("[ERROR]: Missing Argument(s)");
 		System.err.println("Usage: ErrorLogJoinTopology filename dashboradHost");
 		System.exit(-1);
 	}
@@ -38,14 +38,14 @@ public class ErrorLogJoinTopology {
 	    TopologyBuilder builder = new TopologyBuilder();
 	
 	    builder.setSpout("spout", new FileReaderSpout(args[0]), 1);
-	    builder.setBolt("filter", new RegexFilterBolt(".*\\.gif.*"), 1).shuffleGrouping("spout");
-	    builder.setBolt("transform", new ExtractLogErrorBolt(), 1).shuffleGrouping("filter");
-	    builder.setBolt("join", new JoinLogErrorBolt(), 1).shuffleGrouping("transform");
-	    builder.setBolt("dashboard", new DashboardPrinterBolt(args[1],8888),1).shuffleGrouping("join");
+	    builder.setBolt("filter", new RegexFilterBolt(".*\\.gif.*"), 2).shuffleGrouping("spout");
+	    builder.setBolt("transform", new ExtractLogErrorBolt(), 2).shuffleGrouping("filter");
+	    builder.setBolt("join", new JoinLogErrorBolt(), 2).shuffleGrouping("transform");
+	    builder.setBolt("dashboard", new DashboardPrinterBolt(args[1],8888),2).shuffleGrouping("join");
 	    Config conf = new Config();
 	    conf.setDebug(true);
 	    conf.setNumWorkers(3);
-	    StormSubmitter.submitTopologyWithProgressBar("Error Log Join", conf, builder.createTopology());
+	    StormSubmitter.submitTopologyWithProgressBar("ErrorLogJoin", conf, builder.createTopology());
 	  }
   }
 }
