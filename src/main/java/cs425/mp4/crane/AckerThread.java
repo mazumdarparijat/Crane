@@ -30,8 +30,10 @@ public class AckerThread extends Thread {
                 CraneData data = (CraneData) is.readObject();
                 Integer numAcks= (Integer) is.readObject();
                 is.close();
-                if (data.val!=null)
-                    pr.println(System.currentTimeMillis()+","+data.tupleID + "," + data.val);
+                if (data.val!=null) {
+                    pr.println(System.currentTimeMillis() + "," + data.tupleID + "," + data.val);
+                    pr.flush();
+                }
                 System.err.println("[ACKER] "+System.currentTimeMillis()+" "+"tuple_id : " + data.tupleID);
                 ackRecords.put(data.tupleID, ackRecords.get(data.tupleID) + numAcks);
             } catch (IOException e) {
