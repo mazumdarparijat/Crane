@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cs425.mp3.Pid;
@@ -71,8 +68,8 @@ public class Nimbus extends Thread {
     private void taskRedistribution() {
         boolean redistributionDone=false;
 
-        ArrayList<String> tobeRemoved=new ArrayList<String>();
-        for (String workerID : workerID2Tasks.keySet()) {
+        ArrayList<String> clone=new ArrayList<String>(workerID2Tasks.keySet());
+        for (String workerID : clone) {
             if (!failureDetector.isAlive(workerID)) {
                 redistributionDone=true;
                 Random rn=new Random();
@@ -81,18 +78,16 @@ public class Nimbus extends Thread {
                     String newWorker=availableWorkers.get(rn.nextInt(availableWorkers.size()));
                     int newPort=communicateLaunch(newWorker,taskID,id2Task.get(taskID).b,id2Task.get(taskID).fd);
                     task2Address.put(taskID,new TaskAddress(Pid.getPid(newWorker).hostname,newPort));
-                    if (!workerID2Tasks.containsKey(newWorker))
-                        workerID2Tasks.put(newWorker,new ArrayList<String>());
+                    if (!workerID2Tasks.containsKey(newWorker)) {
+                        workerID2Tasks.put(newWorker, new ArrayList<String>());
+                    }
 
                     workerID2Tasks.get(newWorker).add(taskID);
                 }
 
-                tobeRemoved.add(workerID);
+                workerID2Tasks.remove(workerID);
             }
         }
-
-        for (String workerID : tobeRemoved)
-            workerID2Tasks.remove(workerID);
 
         if (redistributionDone) {
             updateTaskLists();
