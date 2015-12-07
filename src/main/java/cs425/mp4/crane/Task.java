@@ -3,7 +3,8 @@ package cs425.mp4.crane;
 import cs425.mp4.crane.Topology.Bolt;
 
 /**
- * Created by parijatmazumdar on 02/12/15.
+ * (Bolt,Forwarder) pair. Task contains necessary info needed to
+ * launch bolt tasks in worker
  */
 public class Task {
     public final Bolt b;

@@ -7,7 +7,9 @@ import java.net.*;
 import java.util.HashMap;
 
 /**
- * Created by parijatmazumdar on 03/12/15.
+ * Task thread that hosts bolt logic. Receives input tuple,
+ * processes it using bolt logic, forwards to next bolts in
+ * topology.
  */
 public class WorkerThread extends Thread {
     private final int BYTE_LEN=10000;
@@ -56,6 +58,14 @@ public class WorkerThread extends Thread {
         }
     }
 
+    /**
+     * Send ack to acker thread if this is the last bolt in topology
+     * or if the input tuple is filtered out by the bolt
+     * @param in Input data
+     * @param hostname acker hostname
+     * @param port acker port
+     * @param numAcks weight of ack sent by this bolt
+     */
     private void sendAck(CraneData in, String hostname, int port, int numAcks) {
         try {
             ByteArrayOutputStream bo=new ByteArrayOutputStream(BYTE_LEN);
@@ -77,6 +87,12 @@ public class WorkerThread extends Thread {
         }
     }
 
+    /**
+     * Send result to subsequent bolts
+     * @param in
+     * @param hostname
+     * @param port
+     */
     private void forwardResult(CraneData in, String hostname, int port) {
         try {
             ByteArrayOutputStream bo=new ByteArrayOutputStream(BYTE_LEN);

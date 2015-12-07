@@ -4,6 +4,10 @@ import java.util.HashMap;
 
 import cs425.mp4.crane.Topology.Bolt;
 
+/**
+ * Filter bolt for reddit posts based on downvotes/upvotes
+ */
+
 @SuppressWarnings("serial")
 public class FlagPostFilterRedditBolt implements Bolt {
 	final int tvThreshold=100;

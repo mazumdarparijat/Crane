@@ -8,13 +8,11 @@ import org.apache.commons.cli.*;
 
 import java.io.IOException;
 
-/**
- * Created by parijatmazumdar on 04/12/15.
- */
 public class NimbusMain {
     private static int FDport;
     public static FailureDetector FD;
     public static Nimbus nb;
+
     /**
      * Formats commandLine inputs and flags
      */
@@ -30,6 +28,7 @@ public class NimbusMain {
         }
         FDport = Integer.parseInt(line.getOptionValue("port"));
     }
+
     /** Creates the required options to look for in command line arguments
      * @return Options object
      */
@@ -49,7 +48,7 @@ public class NimbusMain {
         formatter.printHelp("failureDetector", op);
     }
 
-    /**Setup Failure Detector and Master Tracker
+    /**Setup Failure Detector
      * @return
      * @throws IOException
      */
@@ -57,7 +56,7 @@ public class NimbusMain {
         FD=new FDIntroducer(FDport);
     }
 
-    /**Main function for launching SDFSProxy
+    /**Main function for launching Nimbus
      * @param args
      * @throws IOException
      * @throws InterruptedException
@@ -72,6 +71,7 @@ public class NimbusMain {
 
         Thread.sleep(1000);
 
+        // Start Nimbus
         nb=new Nimbus(FD);
         nb.setDaemon(true);
         nb.start();

@@ -3,6 +3,10 @@ package cs425.mp4.crane.Apps;
 import java.util.HashMap;
 import cs425.mp4.crane.Topology.Bolt;
 
+/**
+ * Counter bolt for wordcount
+ */
+
 @SuppressWarnings("serial")
 public class LocalCountBolt implements Bolt {
 	public void open() {

@@ -7,7 +7,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * Created by parijatmazumdar on 01/12/15.
+ * Submitter class for topology. This class is a client
+ * which serializes topology and sends it to Nimbus.
  */
 public class CraneSubmitter {
     private final String nimbusHostname;
@@ -17,6 +18,10 @@ public class CraneSubmitter {
         nimbusPort=port;
     }
 
+    /**
+     *
+     * @param t topology to submit to Crane
+     */
     public void submitTopology(Topology t) {
         try {
             Socket sock=new Socket(nimbusHostname,nimbusPort);

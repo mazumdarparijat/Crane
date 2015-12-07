@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * Created by parijatmazumdar on 03/12/15.
+ * Data structure used to communicate results between spout and
+ * bolt tasks. Its essentially a pair of (TupleID,Value).
  */
 public class CraneData implements Serializable {
     private static final long serialVersionUID = 70L;

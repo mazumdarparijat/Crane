@@ -14,7 +14,10 @@ import cs425.mp4.crane.Messages.UpdateTaskListMessage;
 import cs425.mp4.crane.Topology.Bolt;
 
 /**
- * Created by parijatmazumdar on 01/12/15.
+ * Worker thread running in worker nodes.
+ * 1. Launches tasks on request of nimbus
+ * 2. Gets (hostname,port) information of
+ * various tasks in the distributed system.
  */
 public class Worker extends Thread {
     private final ServerSocket socket;
@@ -25,11 +28,6 @@ public class Worker extends Thread {
         socket=new ServerSocket(Constants.WORKER_PORT);
         freePort=Constants.FREE_PORT_INIT;
         task2Address=new HashMap<String, TaskAddress>();
-    }
-
-    @Override
-    public void interrupt() {
-
     }
 
     @Override

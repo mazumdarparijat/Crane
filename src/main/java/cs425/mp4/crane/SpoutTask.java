@@ -13,9 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by parijatmazumdar on 03/12/15.
+ * Task thread that hosts spout logic. Maintains data structures to record
+ * tuples which are sent out but their acks are not received. Replays tuples
+ * whose acks are not received before timeout.
  */
 public class SpoutTask extends Thread {
+    /**
+     * private class for data storage in unAcked queue
+     */
     private class QueueData {
         public final CraneData data;
         public final long expiryTime;
@@ -24,6 +29,7 @@ public class SpoutTask extends Thread {
             this.expiryTime=expiryTime;
         }
     }
+
     private final int BYTE_LEN=10000;
     private final long WAIT_TIME=2000;
     private final int QCAPACITY=1000;
@@ -35,6 +41,15 @@ public class SpoutTask extends Thread {
     private long tupleID;
     private Queue<QueueData> unAcked;
     private Map<Long,Integer> acks;
+
+    /**
+     *
+     * @param sp spout
+     * @param fd forwarding logic for spout
+     * @param taskAddress hostname, port info of tasks launched
+     * @param emitNext whether to emit next tuple or not (Atomic Boolean)
+     * @param port port to run this task on
+     */
     public SpoutTask(Spout sp, Forwarder fd, HashMap<String, TaskAddress> taskAddress,
                      AtomicBoolean emitNext, int port) {
         this.sp = sp;
@@ -58,8 +73,6 @@ public class SpoutTask extends Thread {
         sp.open();
         tupleID=1;
         while(true) {
-//            System.err.println("[SPOUT_TASK] Queue size "+unAcked.size());
-//            manageUnacked();
             if (!emitNext.get()) {
                 try {
                     Thread.sleep(500);
@@ -83,7 +96,6 @@ public class SpoutTask extends Thread {
                         }
 
                         id = tupleID++;
-//                        System.err.println("[SPOUT_TASK] " + System.currentTimeMillis() + " Emit : " + id);
                     } else {
                         try {
                             Thread.sleep(10);
@@ -101,10 +113,8 @@ public class SpoutTask extends Thread {
                         acks.remove(id);
                         continue;
                     }
-//                    System.err.println("[SPOUT_TASK] Re-Emit : " + id);
                 }
 
-//                System.err.println("[SPOUT_TASK] UNACKED SIZE : " + unAcked.size());
                 CraneData out=new CraneData(id,outVal);
                 unAcked.add(new QueueData(out, System.currentTimeMillis() + WAIT_TIME));
                 acks.put(out.tupleID,0);
@@ -117,6 +127,10 @@ public class SpoutTask extends Thread {
         }
     }
 
+    /**
+     * Helper method to remove tuples which have
+     * received sufficient acks from the unAcked list
+     */
     private void manageUnacked() {
         Iterator<QueueData> it=unAcked.iterator();
         while (it.hasNext()) {
@@ -126,6 +140,12 @@ public class SpoutTask extends Thread {
         }
     }
 
+    /**
+     * Send output forward to bolt
+     * @param data value to send
+     * @param hostname destination hostname
+     * @param port destination port
+     */
     private void forwardResult(CraneData data, String hostname, int port) {
         try {
             ByteArrayOutputStream bo=new ByteArrayOutputStream(BYTE_LEN);

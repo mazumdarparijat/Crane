@@ -7,6 +7,11 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import cs425.mp4.crane.Topology.Bolt;
 
+
+/**
+ * Join Bolt for error log
+ */
+
 @SuppressWarnings("serial")
 public class JoinLogErrorBolt implements Bolt {
 	HashMap<String,String> errMap;

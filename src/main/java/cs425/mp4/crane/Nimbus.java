@@ -21,7 +21,8 @@ import cs425.mp4.crane.Topology.Topology;
 import cs425.mp4.crane.Topology.TopologyRecord;
 
 /**
- * Created by parijatmazumdar on 01/12/15.
+ * Nimbus - The crane task which gets topology from client, launches
+ * tasks in various worker machines, redistributes tasks on failures.
  */
 public class Nimbus extends Thread {
     private static final int NIMBUS_TIMEOUT=1000;
@@ -32,6 +33,13 @@ public class Nimbus extends Thread {
     private HashMap<String,TaskAddress> task2Address;
     private HashMap<String,Task> id2Task;
     private AtomicBoolean spoutEmitTuples;
+
+    /**
+     *
+     * @param failureDetector Failure detector object to get membership
+     *                        list from
+     * @throws IOException
+     */
     public Nimbus(FailureDetector failureDetector) throws IOException {
         this.failureDetector = failureDetector;
         sock=new ServerSocket(Constants.NIMBUS_PORT);
@@ -47,6 +55,10 @@ public class Nimbus extends Thread {
             System.err.println(taskID+" = "+task2Address.get(taskID).hostname+" : "+task2Address.get(taskID).port);
     }
 
+    /**
+     * 1. Check if redistribution needed or not. Do redistribution if necessary
+     * 2. Wait for topology to be submitted
+     */
     public void run() {
         System.out.println("[NIMBUS] Nimbus run started");
         while(true) {
@@ -65,6 +77,9 @@ public class Nimbus extends Thread {
         }
     }
 
+    /**
+     * Check if any member node failed or not. If failed, redistribute.
+     */
     private void taskRedistribution() {
         boolean redistributionDone=false;
 
@@ -98,6 +113,9 @@ public class Nimbus extends Thread {
         }
     }
 
+    /**
+     * Send updated distribution of tasks to Worker nodes
+     */
     private void updateTaskLists() {
         for (String workerid : workerID2Tasks.keySet()) {
             try {
@@ -112,6 +130,11 @@ public class Nimbus extends Thread {
         }
     }
 
+    /**
+     * Message handing
+     * @param is socket input stream
+     * @param os socket output stream
+     */
     private void handleMessage(ObjectInputStream is, ObjectOutputStream os) {
         try {
             Message recd=(Message) is.readObject();
@@ -135,6 +158,11 @@ public class Nimbus extends Thread {
         }
     }
 
+    /**
+     * Helper method
+     * @param recdTopology
+     * @return
+     */
     private HashMap<String,TopologyRecord> getID2RecordMap(Topology recdTopology) {
         HashMap<String,TopologyRecord> idToRecord=new HashMap<String, TopologyRecord>();
         for (TopologyRecord tr : recdTopology.getRecords())
@@ -143,6 +171,11 @@ public class Nimbus extends Thread {
         return idToRecord;
     }
 
+    /**
+     * Helper method
+     * @param recdTopology
+     * @return
+     */
     private HashMap<String,ArrayList<String>> getID2ChildrenMap(Topology recdTopology) {
         HashMap<String,ArrayList<String>> children=new HashMap<String, ArrayList<String>>();
         for (TopologyRecord tr : recdTopology.getRecords()) {
@@ -157,6 +190,13 @@ public class Nimbus extends Thread {
         return children;
     }
 
+    /**
+     * deciper the topology sent, break down into tasks, communicate
+     * the tasks with workers
+     * @param recdTopology
+     * @throws UnhandledCaseException
+     * @throws UnknownHostException
+     */
     private void distributeTasks(Topology recdTopology) throws UnhandledCaseException, UnknownHostException {
         HashMap<String,TopologyRecord> idToRecord=getID2RecordMap(recdTopology);
         HashMap<String,ArrayList<String>> children=getID2ChildrenMap(recdTopology);
@@ -183,6 +223,11 @@ public class Nimbus extends Thread {
         }
     }
 
+    /**
+     * Helper method
+     * @param recdTopology
+     * @return
+     */
     private String getSpoutID(Topology recdTopology) {
         for (TopologyRecord tr : recdTopology.getRecords()) {
             if (tr.type==TopologyRecord.spoutType)
@@ -192,6 +237,12 @@ public class Nimbus extends Thread {
         return null;
     }
 
+    /**
+     * Helper method to count the number of leaf bolts that a parent bolt has including self.
+     * @param recdTopology
+     * @param children
+     * @return
+     */
     private HashMap<String, Integer> countNumAcks(Topology recdTopology, HashMap<String,ArrayList<String>> children) {
         HashMap<String,Integer> ret=new HashMap<String,Integer>();
         for (TopologyRecord tr : recdTopology.getRecords()) {
@@ -203,6 +254,13 @@ public class Nimbus extends Thread {
         return ret;
     }
 
+    /**
+     * Helper method for countAcks
+     * @param id
+     * @param ret
+     * @param children
+     * @return
+     */
     private Integer countAckHelper(String id, HashMap<String, Integer> ret, HashMap<String, ArrayList<String>> children) {
         if (!children.containsKey(id)) {
             ret.put(id,1);
@@ -217,6 +275,11 @@ public class Nimbus extends Thread {
         }
     }
 
+    /**
+     * launch tasks in Worker nodes.
+     * @param tr spout/bolt description
+     * @param fd Forwarding logic for spout/bolt output
+     */
     private void launchTasks(TopologyRecord tr, Forwarder fd) {
         List<String> workers=failureDetector.getMemlistSkipIntroducer();
         Random rn=new Random();
@@ -233,6 +296,14 @@ public class Nimbus extends Thread {
         }
     }
 
+    /**
+     * send task to worker
+     * @param workerID
+     * @param taskID
+     * @param operationUnit spout/bolt
+     * @param fd Forwarder of the spout/bolt
+     * @return port number in which task is launched in worker node
+     */
     private int communicateLaunch(String workerID, String taskID, Bolt operationUnit, Forwarder fd) {
         try {
             Socket sock=new Socket(Pid.getPid(workerID).hostname,Constants.WORKER_PORT);

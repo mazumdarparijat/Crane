@@ -21,14 +21,7 @@ public class WorkerMain {
     private static int FDport=0;
     public static int intro_port=0;
     public static String intro_address="";
-    private static int SERVICE_START_DELAY=100;
     public static FailureDetector FD;
-    public static ElectionService ES;
-    public static MasterService MS;
-    public static FileServer FS;
-    public static final int FSPortDelta=2;
-    public static final int ESPortDelta=1;
-    public static final int MSPortDelta=3;
     /**
      * Formats commandLine inputs and flags
      */
@@ -67,7 +60,7 @@ public class WorkerMain {
         formatter.printHelp("failureDetector", op);
     }
 
-    /**Setup Failure Detector, Election Service, Master Service and FileServer
+    /**Setup Failure Detector
      * @return
      * @throws IOException
      */
@@ -75,7 +68,7 @@ public class WorkerMain {
         FD=new FailureDetector(FDport,intro_address,intro_port);
     }
 
-    /**Main function for launching SDFSServer
+    /**Main function for launching Worker
      * @param args
      * @throws IOException
      * @throws InterruptedException
@@ -83,11 +76,13 @@ public class WorkerMain {
     public static void main(String [] args) throws IOException, InterruptedException {
         FormatCommandLineInputs(args);
         setupServices();
+
         //Start Failure Detector
         FailureDetectorThread FDThread = new FailureDetectorThread(FD);
         FDThread.setDaemon(true);
         FDThread.start();
 
+        // Start worker thread
         Thread.sleep(1000);
         Worker wk=new Worker();
         wk.setDaemon(true);
@@ -98,7 +93,7 @@ public class WorkerMain {
         InputThread.setDaemon(true);
         InputThread.start();
 
-        //Wait for Failure Detector
+        //Wait for Failure Detector and worker
         FDThread.join();
         wk.join();
     }

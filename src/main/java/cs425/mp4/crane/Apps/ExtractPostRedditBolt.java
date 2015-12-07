@@ -4,6 +4,10 @@ import java.util.HashMap;
 
 import cs425.mp4.crane.Topology.Bolt;
 
+/**
+ * Bolt logic for extracting post params from reddit log
+ */
+
 @SuppressWarnings("serial")
 public class ExtractPostRedditBolt implements Bolt {
 	public void open() {

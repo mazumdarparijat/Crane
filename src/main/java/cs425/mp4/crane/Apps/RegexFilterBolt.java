@@ -4,6 +4,10 @@ import java.util.HashMap;
 
 import cs425.mp4.crane.Topology.Bolt;
 
+/**
+ * filter bolt for matching regex
+ */
+
 @SuppressWarnings("serial")
 public class RegexFilterBolt implements Bolt {
 	private String _regex;

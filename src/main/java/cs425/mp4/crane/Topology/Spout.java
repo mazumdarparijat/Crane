@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * Created by parijatmazumdar on 01/12/15.
+ * Spout interface
  */
 public interface Spout extends Serializable {
     static final long serialVersionUID = 75L;

@@ -3,7 +3,7 @@ package cs425.mp4.crane.Topology;
 import java.io.Serializable;
 
 /**
- * Created by parijatmazumdar on 01/12/15.
+ * Helper class. Record all necessary information about a spout/bolt.
  */
 public class TopologyRecord implements Serializable {
     public static final char spoutType='s';

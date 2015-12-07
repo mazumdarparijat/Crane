@@ -1,7 +1,7 @@
 package cs425.mp4.crane.Exceptions;
 
 /**
- * Created by parijatmazumdar on 01/12/15.
+ * Custom exception
  */
 public class InvalidIDException extends Exception {
     public InvalidIDException(String message) {

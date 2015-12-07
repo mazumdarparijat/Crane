@@ -6,6 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 import cs425.mp4.crane.Topology.Bolt;
 
+/**
+ * remove stop words bolt
+ */
+
 @SuppressWarnings("serial")
 public class IgnoreStopWordsBolt implements Bolt {
     private Set<String> IGNORE_LIST = new HashSet<String>(Arrays.asList(new String[] {

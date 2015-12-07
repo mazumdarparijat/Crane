@@ -3,6 +3,10 @@ package cs425.mp4.crane.Apps;
 import java.util.HashMap;
 import cs425.mp4.crane.Topology.Bolt;
 
+/**
+ * Bolt to extract error in log.
+ */
+
 @SuppressWarnings("serial")
 public class ExtractLogErrorBolt implements Bolt {
 	public void open() {

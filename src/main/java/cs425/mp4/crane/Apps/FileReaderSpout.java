@@ -25,6 +25,10 @@ import java.util.HashMap;
 
 import cs425.mp4.crane.Topology.Spout;
 
+/**
+ * Spout to read from file
+ */
+
 @SuppressWarnings("serial")
 public class FileReaderSpout implements Spout {
   String filepath;

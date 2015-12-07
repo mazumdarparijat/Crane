@@ -3,7 +3,7 @@ package cs425.mp4.crane;
 import java.io.Serializable;
 
 /**
- * Created by parijatmazumdar on 02/12/15.
+ * (hostname,port) Address
  */
 public class TaskAddress implements Serializable {
     static final long serialVersionUID = 70L;

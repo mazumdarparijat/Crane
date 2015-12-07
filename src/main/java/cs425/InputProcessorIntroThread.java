@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 /**
- * Thread Class for processing user input in SDFSProxy
+ * Thread Class for processing user input in Nimbus
  *
  */
 public class InputProcessorIntroThread extends Thread{

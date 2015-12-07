@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Random;
 
 /**
- * Created by parijatmazumdar on 04/12/15.
+ * Example topology in crane
  */
-public class CraneMain {
+public class CraneExample {
     private static class RandomWord implements Spout {
 
         public void open() {

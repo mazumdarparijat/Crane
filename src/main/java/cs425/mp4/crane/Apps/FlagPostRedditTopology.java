@@ -5,6 +5,9 @@ import cs425.mp4.crane.CraneSubmitter;
 import cs425.mp4.crane.Exceptions.InvalidIDException;
 import cs425.mp4.crane.Topology.TopologyBuilder;
 
+/**
+ * Topology to find spam posts in reddit
+ */
 public class FlagPostRedditTopology {
   public static void main(String[] args) {
   if(args.length!=2){

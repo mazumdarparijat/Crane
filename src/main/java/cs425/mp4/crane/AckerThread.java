@@ -6,13 +6,22 @@ import java.net.DatagramSocket;
 import java.util.Map;
 
 /**
- * Created by parijatmazumdar on 04/12/15.
+ * Thread class for receiving acks for completely processed tuples.
+ * It Uses a UDP receiver socket to list to incoming acks and
+ * does bookkeeping of these acks.
  */
 public class AckerThread extends Thread {
     private static final int BYTE_LEN=10000;
     private final DatagramSocket sock;
     Map<Long,Integer> ackRecords;
     private PrintWriter pr;
+
+    /**
+     *
+     * @param ackPort port in which to listen to
+     * @param ackRecords bookkeeping data structure
+     * @throws IOException
+     */
     public AckerThread(int ackPort,Map<Long,Integer> ackRecords) throws IOException {
         sock=new DatagramSocket(ackPort);
         this.ackRecords=ackRecords;
@@ -34,7 +43,7 @@ public class AckerThread extends Thread {
                     pr.println(System.currentTimeMillis() + "," + data.tupleID + "," + data.val);
                     pr.flush();
                 }
-//                System.err.println("[ACKER] "+System.currentTimeMillis()+" "+"tuple_id : " + data.tupleID);
+
                 ackRecords.put(data.tupleID, ackRecords.get(data.tupleID) + numAcks);
             } catch (IOException e) {
                 e.printStackTrace();

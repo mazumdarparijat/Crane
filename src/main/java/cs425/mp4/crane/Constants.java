@@ -1,7 +1,7 @@
 package cs425.mp4.crane;
 
 /**
- * Created by parijatmazumdar on 04/12/15.
+ * Constants used in project
  */
 public class Constants {
     public static final int NIMBUS_PORT=9500;

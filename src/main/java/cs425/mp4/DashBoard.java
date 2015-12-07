@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Server to collect output of Storm topology and write to a file
+ */
 public class DashBoard {
 	final static int PORT=8888;
 	@SuppressWarnings("resource")
