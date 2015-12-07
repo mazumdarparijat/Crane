@@ -25,7 +25,7 @@ public class SpoutTask extends Thread {
         }
     }
     private final int BYTE_LEN=10000;
-    private final long WAIT_TIME=10000;
+    private final long WAIT_TIME=2000;
     private final int QCAPACITY=1000;
     private final Spout sp;
     private final Forwarder fd;
@@ -58,7 +58,7 @@ public class SpoutTask extends Thread {
         sp.open();
         tupleID=1;
         while(true) {
-            System.err.println("[SPOUT_TASK] Queue size "+unAcked.size());
+//            System.err.println("[SPOUT_TASK] Queue size "+unAcked.size());
 //            manageUnacked();
             if (!emitNext.get()) {
                 try {
@@ -77,8 +77,10 @@ public class SpoutTask extends Thread {
                 if (unAcked.peek()==null || unAcked.peek().expiryTime>System.currentTimeMillis()) {
                     if (unAcked.size()<QCAPACITY) {
                         outVal = sp.nextTuple();
-                        if (outVal == null)
+                        if (outVal == null) {
+                            System.err.println(unAcked.size());
                             continue;
+                        }
 
                         id = tupleID++;
 //                        System.err.println("[SPOUT_TASK] " + System.currentTimeMillis() + " Emit : " + id);
@@ -116,6 +118,7 @@ public class SpoutTask extends Thread {
     }
 
     private void manageUnacked() {
+        System.err.println("[SPOUT_TASK] Cleaning buffer");
         Iterator<QueueData> it=unAcked.iterator();
         while (it.hasNext()) {
             QueueData d=it.next();
