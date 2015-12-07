@@ -33,6 +33,10 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+/**
+ * read from file spout
+ */
+
 @SuppressWarnings("serial")
 public class FileReaderSpout extends BaseRichSpout {
   private class CustomComparator implements Comparator<Values>{

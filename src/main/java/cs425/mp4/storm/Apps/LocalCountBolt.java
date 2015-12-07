@@ -10,6 +10,10 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Counter bolt
+ */
+
 @SuppressWarnings("serial")
 public class LocalCountBolt extends BaseBasicBolt {
     public void execute(Tuple tuple, BasicOutputCollector collector) {

@@ -24,7 +24,7 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
 
 /**
- * This topology demonstrates Storm's stream groupings and multilang capabilities.
+ * Topology to identify spam posts in reddit
  */
 public class FlagPostRedditTopology {
 

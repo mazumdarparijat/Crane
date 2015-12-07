@@ -28,6 +28,10 @@ import backtype.storm.utils.Utils;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * random sentence emitter spout - Example
+ */
+
 @SuppressWarnings("serial")
 public class RandomSentenceSpout extends BaseRichSpout {
   SpoutOutputCollector _collector;

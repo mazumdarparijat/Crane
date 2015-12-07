@@ -11,6 +11,10 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Stopword removal bolt
+ */
+
 @SuppressWarnings("serial")
 public class IgnoreStopWordsBolt extends BaseBasicBolt {
 

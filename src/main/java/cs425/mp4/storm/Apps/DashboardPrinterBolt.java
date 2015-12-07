@@ -11,6 +11,10 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
 
+/**
+ * Bolt for forwarding output to Dashboard
+ */
+
 @SuppressWarnings("serial")
 public class DashboardPrinterBolt extends BaseRichBolt {
 	private final int _port;

@@ -7,6 +7,10 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * regex based filtering bolt
+ */
+
 @SuppressWarnings("serial")
 public class RegexFilterBolt extends BaseBasicBolt {
 	private String _regex;

@@ -7,6 +7,10 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * identify spam posts in reddit bolt using support confidence
+ */
+
 @SuppressWarnings("serial")
 public class FlagPostFilterRedditBolt extends BaseBasicBolt {
 	final int tvThreshold=100;

@@ -14,6 +14,10 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Join with resource file bolt
+ */
+
 @SuppressWarnings("serial")
 public class JoinLogErrorBolt extends BaseBasicBolt {
 	HashMap<String,String> errMap;

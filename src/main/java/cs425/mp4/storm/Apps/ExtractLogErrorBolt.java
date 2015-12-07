@@ -7,6 +7,9 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Bolt for extracting error params in log record
+ */
 @SuppressWarnings("serial")
 public class ExtractLogErrorBolt extends BaseBasicBolt {
     public void execute(Tuple tuple, BasicOutputCollector collector) {

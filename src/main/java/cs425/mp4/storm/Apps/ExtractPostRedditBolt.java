@@ -7,6 +7,10 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Extract post params from reddit post record bolt
+ */
+
 @SuppressWarnings("serial")
 public class ExtractPostRedditBolt extends BaseBasicBolt {
     public void execute(Tuple tuple, BasicOutputCollector collector) {

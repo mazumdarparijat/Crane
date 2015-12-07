@@ -21,9 +21,9 @@ import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
-////import backtype.storm.StormSubmitter;
+
 /**
- * This topology demonstrates Storm's stream groupings and multilang capabilities.
+ * word counting topology
  */
 public class WordCountTopology {
 
