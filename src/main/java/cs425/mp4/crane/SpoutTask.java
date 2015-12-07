@@ -118,7 +118,6 @@ public class SpoutTask extends Thread {
     }
 
     private void manageUnacked() {
-        System.err.println("[SPOUT_TASK] Cleaning buffer");
         Iterator<QueueData> it=unAcked.iterator();
         while (it.hasNext()) {
             QueueData d=it.next();
