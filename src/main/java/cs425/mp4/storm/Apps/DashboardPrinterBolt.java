@@ -26,13 +26,11 @@ public class DashboardPrinterBolt extends BaseRichBolt {
     }
 	public void execute(Tuple tuple) {
 		try{
-			String linenumber=(String)tuple.getValueByField("linenumber");
-			if(Integer.parseInt(linenumber)>132000 || Integer.parseInt(linenumber)==2){
-	    		Socket clientSocket=new Socket(_add,_port);
-	    		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-				outToServer.writeBytes(linenumber+","+tuple.toString()+'\n');
-				clientSocket.close();
-			}
+    		Socket clientSocket=new Socket(_add,_port);
+    		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+    		String linenumber=(String)tuple.getValueByField("linenumber");
+			outToServer.writeBytes(linenumber+","+tuple.toString()+'\n');
+			clientSocket.close();
 			_collector.ack(tuple);
     	}catch(IOException e){
     		e.printStackTrace();
