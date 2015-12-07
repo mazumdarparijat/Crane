@@ -41,7 +41,7 @@ public class FileReaderSpout extends BaseRichSpout {
 	  }
   }
   SpoutOutputCollector _collector;
-  final int BUFFER_CAPACITY=100;
+  final int BUFFER_CAPACITY=1000;
   final long TIMEOUT=2000;
   String filepath;
   BufferedReader bufferedReader;
